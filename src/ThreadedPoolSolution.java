@@ -45,6 +45,57 @@ public class ThreadedPoolSolution {
                 return trimmed;
             }
         });
+
+        Future<Integer> shop = executor.submit(new Runnable() {
+            @Override
+            public void run() {
+                int turnedAway = 0;
+                int trimmed = 0;
+
+                while(true){
+                    Customer customer = toShop.poll();
+                    if(customer != null){
+                        if(customer.getId() == -1) {
+                            try {
+                                waitingChairs.put(customer);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            if(waitingChairs.offer(customer)) {
+                                System.out.println("Shop >> Customer " + customer.getId() + " has taken a seat! " + waitingChairs.size() + " are currently in use!");
+                            } else {
+                                ++turnedAway;
+                                System.out.println("Shop >> Customer " + customer.getId() + " has turned away!");
+
+                                try {
+                                    fromShop.put(customer);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+
+                        SuccessfulCustomer successfulCustomer = fromChair.poll();
+
+                        if(successfulCustomer != null){
+                            if(successfulCustomer.customer.getId() == -1){
+                                break;
+                            } else {
+                                ++trimmed;
+                                System.out.println("Shop >> Customer " + successfulCustomer.customer.getId() + " is leaving with a fresh cut!");
+                                try {
+                                    fromShop.put(successfulCustomer);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                        System.out.println("Shop >> Closing now with " + trimmed + " customers trimmed and " + turnedAway + " customers turned away");
+                    }
+                }
+            }
+        }, 0);
     }
 
     private static final class Customer {
