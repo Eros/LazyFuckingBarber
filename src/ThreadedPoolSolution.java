@@ -1,9 +1,30 @@
+import java.util.Random;
+import java.util.concurrent.*;
+
 /***
  * @author George
  * @since 17-May-18
  */
 public class ThreadedPoolSolution {
 
+
+    private void runSim(int customerCount, int waitingSeats, RandomCalling trimTime, RandomCalling waitTime) throws InterruptedException, ExecutionException {
+        //general information
+        ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(Runtime.getRuntime().availableProcessors());
+        ArrayBlockingQueue<Customer> waitingChairs = new ArrayBlockingQueue<>(waitingSeats);
+        ArrayBlockingQueue<Customer> toShop = new ArrayBlockingQueue<>(customerCount);
+        ArrayBlockingQueue<SuccessfulCustomer> fromChair = new ArrayBlockingQueue<>(customerCount);
+        ArrayBlockingQueue<Object> fromShop = new ArrayBlockingQueue<>(customerCount);
+        Future<Integer> barber = executor.submit(new Callable<Integer>() {
+
+
+            //lets run this shit
+            @Override
+            public Integer call() throws Exception {
+                return null;
+            }
+        });
+    }
 
     private static final class Customer {
         final int id;
