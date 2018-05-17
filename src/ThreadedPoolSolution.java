@@ -96,6 +96,37 @@ public class ThreadedPoolSolution {
                 }
             }
         }, 0);
+
+        for(int n = 0; n < customerCount; ++n){
+            Thread.sleep(waitTime.call());
+            System.out.println("World >> Customer " + n + " has entered the shop!");
+            toShop.put(new Customer(n));
+        }
+        waitingChairs.put(new Customer(-1));
+        int trimmed = 0;
+        int turnedAway = 0;
+
+        for(int n = 0; n < customerCount; ++n){
+            Object customer = fromShop.take();
+            int id;
+
+            if(customer instanceof SuccessfulCustomer){
+                ++trimmed;
+
+                id = ((SuccessfulCustomer) customer).customer.getId();
+            } else {
+                throw new RuntimeException("World >> Non customer has entered the shop, tie up your fucking dog!");
+            }
+            System.out.println("World >> customer " + id + " has left the shop!");
+        }
+        System.out.println("World >> Closing time");
+        int barberCount = barber.get();
+
+        if(barberCount != trimmed){
+            System.out.println("World >> Barbers claimed " + barberCount + " the world has counted " + trimmed);
+        }
+        System.out.println("Trimmed " + barberCount + " and turned away " + turnedAway + " today");
+        executor.shutdown(); //fuck off
     }
 
     private static final class Customer {
