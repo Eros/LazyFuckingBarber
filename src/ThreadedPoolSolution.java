@@ -21,6 +21,26 @@ public class ThreadedPoolSolution {
             //lets run this shit
             @Override
             public Integer call() throws Exception {
+                int trimmed = 0;
+                while(true){
+                    try {
+                        Customer customer = waitingChairs.take();
+
+                        if(customer.getId() < 0){
+                            fromChair.put(new SuccessfulCustomer(customer));
+                            break;
+                        }
+                        System.out.println("Barber >> Starting new customer with ID " + customer.getId());
+                        try {
+                            Thread.sleep(trimTime.call());
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        System.out.println("Barber >> Finished customer with ID " + customer.getId());
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
                 return null;
             }
         });
