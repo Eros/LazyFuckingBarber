@@ -40,8 +40,9 @@ public class ThreadedPoolSolution {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
+                    System.out.println("Barber >> Day over, finished with " + trimmed + " customers trimmed!");
                 }
-                return null;
+                return trimmed;
             }
         });
     }
